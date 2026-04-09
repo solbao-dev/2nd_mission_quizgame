@@ -31,3 +31,27 @@
 - **스키마 구조:**
   - `quizzes`: 개별 퀴즈 정보(`question`, `choices`, `answer`)가 딕셔너리 형태로 담긴 리스트 구조입니다.
   - `best_score`: 현재까지 사용자가 기록한 최고 정답 수를 나타내는 숫자(int) 데이터입니다.
+
+  ## 7. 트러블슈팅 (Troubleshooting)
+
+### 🚨 문제 상황 (Issue)
+터미널에서 첫 번째 커밋(`git commit`)을 시도했을 때, 아래와 같은 Author identity unknown 안내 메시지가 발생하며 커밋이 진행되지 않음.
+> "Please tell me who you are." 
+> "Run git config --global user.email and user.name"
+
+### 💡 원인 파악 (Cause)
+온라인 저장소인 **GitHub**에는 로그인이 되어 있었지만, 내 컴퓨터(로컬)에서 작동하는 **Git(버전 관리 프로그램)**에는 작업자가 누구인지 식별할 수 있는 이름과 이메일(환경설정)이 등록되어 있지 않아서 발생한 현상임. Git과 GitHub가 서로 독립적으로 동작한다는 개념을 확실히 인지하게 됨.
+
+### 🛠️ 해결 방법 (Solution)
+터미널에 아래 명령어를 입력하여 로컬 Git에 사용자 정보를 입력함
+```bash
+git config --global user.name “solbao-dev"
+git config --global user.email "dianasjyoon@gmail.com"
+```
+### ✅검증 (Verification)
+‘git config’ 명령어를 통해 설정이 정상적으로 반영되었는지 검증 완료함
+```bash
+git config user.name  >solbao-dev
+git config user.email >dianasjyoon@gmail.com
+```
+
