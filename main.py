@@ -10,9 +10,36 @@ class Quiz:
         return str(self.answer) == str(user_answer)
 
 class QuizGame:
-    def __init__(self, quizzes):
-        self.quizzes = quizzes
+    def __init__(self, default_quizzes):
+        self.quizzes = []
         self.best_score = 0
+        # 🌟 점장님 출근하자마자 지난번 장부(state.json)부터 찾아옵니다!
+        self.load_data(default_quizzes)
+
+    # 🌟 [새로운 기능 4] 장부(state.json)에서 데이터 불러오기
+    def load_data(self, default_quizzes):
+        try:
+            with open("state.json", "r", encoding="utf-8") as f:
+                data = json.load(f) # JSON 파일 읽기!
+                self.best_score = data.get("best_score", 0)
+                # 파일에 있던 글자들을 다시 붕어빵(Quiz 객체)으로 만들어주기
+                self.quizzes = [Quiz(q["question"], q["choices"], q["answer"]) for q in data.get("quizzes", [])]
+                print(f"\n📂 저장된 데이터를 불러왔습니다. (퀴즈 {len(self.quizzes)}개, 최고점수 {self.best_score}점)")
+        except (FileNotFoundError, json.JSONDecodeError):
+            # 파일이 없거나 망가졌으면, 앵두가 준 기본 퀴즈 5개로 시작!
+            print("\n📂 저장된 데이터가 없거나 손상되어 기본 퀴즈 데이터로 시작합니다.")
+            self.quizzes = default_quizzes
+            self.best_score = 0
+
+    # 🌟 [새로운 기능 5] 장부(state.json)에 현재 상태 저장하기
+    def save_data(self):
+        # 파일에 쓰기 좋게 데이터를 정리해요
+        data = {
+            "quizzes": [{"question": q.question, "choices": q.choices, "answer": q.answer} for q in self.quizzes],
+            "best_score": self.best_score
+        }
+        with open("state.json", "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=4) # 예쁘게 저장!
 
     def add_quiz(self):
         print("\n📌 새로운 퀴즈를 추가합니다.")
@@ -28,7 +55,10 @@ class QuizGame:
             print("⚠️ 잘못된 입력입니다. 1에서 4 사이의 숫자를 입력하세요.")
         new_quiz = Quiz(question, choices, int(answer))
         self.quizzes.append(new_quiz)
-        print("\n✅ 퀴즈가 성공적으로 추가되었습니다!")
+        
+        # 🌟 퀴즈를 추가했으니 잊지 말고 장부에 쓰기!
+        self.save_data()
+        print("\n✅ 퀴즈가 성공적으로 추가되고 저장되었습니다!")
 
     def show_list(self):
         print(f"\n📋 등록된 퀴즈 목록 (총 {len(self.quizzes)}개)")
@@ -37,44 +67,39 @@ class QuizGame:
             print(f"[{i+1}] {quiz.question}")
         print("----------------------------------------")
 
-    # 🌟 [새로운 기능 3] 대망의 퀴즈 풀기 기능!
     def play_quiz(self):
-        if not self.quizzes: # 바구니에 퀴즈가 하나도 없으면 튕겨내기!
+        if not self.quizzes:
             print("\n⚠️ 등록된 퀴즈가 없습니다. 먼저 퀴즈를 추가해 주세요!")
             return
 
         print(f"\n📝 퀴즈를 시작합니다! (총 {len(self.quizzes)}문제)")
-        score = 0 # 내 점수는 0점부터 시작
-
-        # 퀴즈 목록을 하나씩 꺼내서 보여주기
+        score = 0
         for i, quiz in enumerate(self.quizzes):
             print("\n----------------------------------------")
             print(f"[문제 {i+1}] {quiz.question}")
             for j, choice in enumerate(quiz.choices):
                 print(f"{j+1}. {choice}")
 
-            # 정답 입력 받기 (방어막 포함)
             while True:
                 user_answer = input("정답 입력 (1-4): ").strip()
                 if user_answer in ['1', '2', '3', '4']:
                     break
                 print("⚠️ 잘못된 입력입니다. 1~4 사이의 숫자를 입력하세요.")
 
-            # 정답 확인하기
             if quiz.check_answer(user_answer):
                 print("✅ 정답입니다!")
-                score += 1 # 맞추면 1점 획득!
+                score += 1
             else:
                 print(f"❌ 오답입니다. (정답: {quiz.answer}번)")
 
-        # 결과 발표
         print("\n========================================")
         print(f"🏆 결과: {len(self.quizzes)}문제 중 {score}문제 정답!")
         
-        # 최고 점수 갱신 로직
         if score > self.best_score:
             print("🎉 새로운 최고 점수입니다!")
-            self.best_score = score # 장부에 내 최고 점수 기록!
+            self.best_score = score
+            # 🌟 최고 점수가 갱신됐으니 장부에 쓰기!
+            self.save_data()
         print("========================================")
 
     def show_menu(self):
@@ -93,20 +118,22 @@ class QuizGame:
                 choice = input("선택: ").strip()
 
                 if choice == '1':
-                    self.play_quiz() # 🌟 아까 만든 퀴즈 풀기 기능 연결!
+                    self.play_quiz()
                 elif choice == '2':
                     self.add_quiz()
                 elif choice == '3':
                     self.show_list()
                 elif choice == '4':
-                    # 🌟 점수 확인 기능도 뽀너스로 연결해 뒀어요!
                     print(f"\n🏆 현재 최고 점수: {self.best_score}점") 
                 elif choice == '5':
-                    print("\n게임을 종료합니다. 수고했어요 솔바오! 👋")
+                    # 🌟 게임을 종료할 때도 마지막으로 꼼꼼하게 저장!
+                    self.save_data()
+                    print("\n게임을 종료합니다. 데이터를 안전하게 저장했어요. 안녕! 👋")
                     break
                 else:
                     print("\n⚠️ 잘못된 입력입니다. 1~5 사이의 숫자를 입력하세요.")
         except (KeyboardInterrupt, EOFError):
+            self.save_data() # 🌟 강제 종료될 때도 빛의 속도로 저장!
             print("\n\n⚠️ 앗! 갑자기 나가셨군요. 데이터를 안전하게 보호하며 식당 문을 닫습니다. 안녕히 가세요! 👋")
 
 
