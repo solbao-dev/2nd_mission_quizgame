@@ -118,17 +118,17 @@ git config user.email >dianasjyoon@gmail.com
 3. **결과**: 이 과정을 통해 팀 프로젝트에서의 코드 공유 및 최신화 메커니즘을 이해함
 
 ## 10. 실행 화면 스크린샷
-### 🖥️ 메뉴 화면
-![메뉴](./docs/screenshots/menu.png)
+### - 메뉴 화면
+![메뉴화면](./docs/screenshots/menu.png)
 
-### 📝 퀴즈 플레이
+### - 퀴즈 플레이
 ![플레이](./docs/screenshots/play.png)
 
-### 📌 퀴즈 추가 및 목록
+### - 퀴즈 추가 및 목록
 ![추가](./docs/screenshots/add_quiz.png)
 
-### 🏆 최고 점수 확인
+### - 최고 점수 확인
 ![점수](./docs/screenshots/score.png)
 
-### 🌿 Git History (Log Graph)
+### - Git History (Log Graph)
 ![깃로그](./docs/screenshots/git_log.png)
