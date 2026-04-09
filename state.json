@@ -69,7 +69,17 @@
                 "TypeError (타입 에러)"
             ],
             "answer": 3
+        },
+        {
+            "question": "코디세이 교육장에 없는 층은?",
+            "choices": [
+                "B1",
+                "1층",
+                "10층",
+                "5층"
+            ],
+            "answer": 3
         }
     ],
-    "best_score": 7
+    "best_score": 8
 }
