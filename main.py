@@ -16,9 +16,41 @@ class QuizGame:
         self.quizzes = quizzes  # 코디세이 특별판 퀴즈 5개를 점장님한테 전달!
         self.best_score = 0     # 최고 점수는 일단 0점으로 시작
 
+    # 🌟 [새로운 기능 1] 퀴즈 추가하기 기능!
+    def add_quiz(self):
+        print("\n📌 새로운 퀴즈를 추가합니다.")
+        question = input("문제를 입력하세요: ").strip()
+        
+        choices = [] # 선택지 4개를 담을 빈 바구니
+        for i in range(1, 5):
+            choice = input(f"선택지 {i}: ").strip()
+            choices.append(choice) # 바구니에 하나씩 쏙쏙 넣기! (.append)
+            
+        # 정답 번호 방어막 (1, 2, 3, 4 중에 하나만 입력할 때까지 계속 물어봄!)
+        while True:
+            answer = input("정답 번호 (1-4): ").strip()
+            if answer in ['1', '2', '3', '4']:
+                break
+            print("⚠️ 잘못된 입력입니다. 1에서 4 사이의 숫자를 입력하세요.")
+            
+        # 새로운 붕어빵(퀴즈)을 구워서 점장님의 퀴즈 목록에 추가!
+        new_quiz = Quiz(question, choices, int(answer))
+        self.quizzes.append(new_quiz)
+        print("\n✅ 퀴즈가 성공적으로 추가되었습니다!")
+
+    # 🌟 [새로운 기능 2] 등록된 퀴즈 목록 보기 기능!
+    def show_list(self):
+        # len()은 바구니 안에 퀴즈가 몇 개 있는지 숫자를 세어주는 마법의 단어예요!
+        print(f"\n📋 등록된 퀴즈 목록 (총 {len(self.quizzes)}개)")
+        print("----------------------------------------")
+        # enumerate()는 퀴즈들에 [1], [2], [3] 처럼 순서대로 번호표를 붙여줘요.
+        for i, quiz in enumerate(self.quizzes):
+            print(f"[{i+1}] {quiz.question}")
+        print("----------------------------------------")
+
+
     # 메뉴판을 보여주고 입력을 받는 기능
     def show_menu(self):
-        # 🚨 진상 손님(강제 종료) 방어막 시작! (try 블록 안에서 메뉴판을 돌려요)
         try:
             while True:
                 print("\n========================================")
@@ -31,27 +63,24 @@ class QuizGame:
                 print("5. 종료")
                 print("========================================")
                 
-                choice = input("선택: ").strip() # .strip()으로 빈칸 방어!
+                choice = input("선택: ").strip()
 
                 if choice == '1':
                     print("\n📝 퀴즈 풀기 기능은 곧 만들 거예요!")
                 elif choice == '2':
-                    print("\n📌 퀴즈 추가 기능은 곧 만들 거예요!")
+                    self.add_quiz() # 🌟 아까 만든 퀴즈 추가 기능 실행!
                 elif choice == '3':
-                    print("\n📋 퀴즈 목록 기능은 곧 만들 거예요!")
+                    self.show_list() # 🌟 아까 만든 퀴즈 목록 보기 기능 실행!
                 elif choice == '4':
                     print("\n🏆 점수 확인 기능은 곧 만들 거예요!")
                 elif choice == '5':
                     print("\n게임을 종료합니다. 수고했어요 솔바오! 👋")
-                    break # while 반복문을 부수고 밖으로 나가서 프로그램을 끝냄
+                    break
                 else:
-                    # 이상한 글자나 범위를 벗어난 숫자 방어!
                     print("\n⚠️ 잘못된 입력입니다. 1~5 사이의 숫자를 입력하세요.")
         
-        # 🚨 누군가 강제로 프로그램을 끄려고(Ctrl+C) 할 때 뻗지 않고 우아하게 안내하기!
         except (KeyboardInterrupt, EOFError):
             print("\n\n⚠️ 앗! 갑자기 나가셨군요. 데이터를 안전하게 보호하며 식당 문을 닫습니다. 안녕히 가세요! 👋")
-            # (나중에는 여기에 "파일 저장하기" 기능이 추가될 거예요!)
 
 # 3. 기본 퀴즈 데이터 5개 구워내기! (코디세이 특별판✨)
 quiz_data = [
@@ -69,5 +98,6 @@ quiz_data = [
 
 # 4. 진짜로 게임을 실행시키는 마법의 주문!
 if __name__ == "__main__":
-    game = QuizGame(quiz_data) # 점장님 출근!
-    game.show_menu()           # 점장님, 메뉴판 보여주세요!
+    game = QuizGame(quiz_data)
+    game.show_menu()
+    
